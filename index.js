@@ -1,18 +1,15 @@
 const express = require('express');
-const { readFile } = require('fs');
+const port = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (request, response) => {
-    readFile('index.html', 'utf8', (err, html) => {
-        if (err) {
-            response.status(500).send('Error reading file');
-        }
-        response.send(html);
-        })
+const replicaApp = process.env.REPLICA_APP || 'defaultApp';
 
+app.use('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+        console.log(`Request served by ${replicaApp}`);
     });
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`replicaApp "${replicaApp}" is running on port ${port}`);
 });
